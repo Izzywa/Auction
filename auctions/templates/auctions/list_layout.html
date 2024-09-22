@@ -1,0 +1,45 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{message.extra_tags}}" role="alert">
+        {{message}} 
+    </div>
+  {%endfor%}
+{% endif %}
+
+<div class="container mx-auto">
+    <h1 class="text-bg-info mb-3">{%block page_title %}{%endblock%}</h1>
+
+    {%block empty_category%}{%endblock%}
+
+    {% for listing in listings%}
+    <div class="card border-dark text-bg-dark mb-3" style="max-width: 1000px;">
+        <div class="row g-0">
+          <div class="col-md-6">
+            {% if listing.listing.image == '' %}
+                {%load static%}
+                <img class="img-fluid rounded-start" src="{% static 'auctions/no_image.001.jpeg' %}" alt="no image" height="300" width="400">
+                {% else %}
+                <img class="img-fluid rounded-start" src={{listing.listing.image}} alt={{listing.listing.title}} height="300" width="400">
+            {% endif %}
+          </div>
+          <div class="col-md-6">
+            <div class="card-body">
+                <a class="h2" href="{% url 'view_listing' listing.listing.id%}" class="listing_link">
+                    {{listing.listing.title}}  <i class="fa-solid fa-arrow-up-right-from-square p-1 my-2 mx-2" style="font-size:1rem"></i>
+                 </a>
+              <p class="card-text">{{listing.listing.description}}</p>
+              <h3>$
+                {{listing.max_bid|floatformat:2}}
+            </h3>
+              <p class="card-text"><small class="text-body-secondary">Created {{listing.listing.timestamp}}</small></p>
+            </div>
+          </div>
+        </div>
+      </div>
+        {% endfor %}
+    </div>
+    {%block not_list%}{%endblock%}
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "auctions/layout.html" %}
+<!--Users should be able to visit a page to create a new listing.-->
+{% block body %}
+{% if messages %}
+{% if messages %}
+    {% for message in messages %}
+    <div{% if message.tags %} class="alert alert-{{message.tags}}"{% endif%} role="alert">
+        {{message}}
+    </div>
+  {%endfor%}
+{% endif %}
+
+{% endif %}
+<div class="container">
+    <h2>Create Listing</h2>
+    <div class="container m-3 p-2">
+        <form action="" method="POST">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit">
+        </form>
+    </div>
+</div>
+{% endblock %}

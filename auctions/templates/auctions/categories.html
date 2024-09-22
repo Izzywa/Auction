@@ -1,0 +1,26 @@
+{% extends "auctions/list_layout.html" %}
+
+{% block page_title%}
+CATEGORIES
+    {%if category%}
+        : {{category}}
+    {%endif%}
+{%endblock%}
+
+{% block empty_category%}
+{%if listings is None%}
+    <div class="index_listing_item p-1">
+    <h3 class="mx-5">No active listing of this category exist yet.</h3>
+    </div>
+{%endif%}
+{%endblock%}
+
+{%block not_list%}
+<div class="container">
+    {%for category in categories%}
+    <a href="{% url 'category' category.category %}" class="category_link">
+        {{category}}  <i class="fa-solid fa-arrow-up-right-from-square p-1 my-2 mx-2" style="font-size:1rem"></i>
+     </a>
+    {%endfor%}
+</div>
+{%endblock%}

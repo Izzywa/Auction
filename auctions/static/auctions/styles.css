@@ -1,0 +1,43 @@
+body {
+    padding: 10px;
+}
+
+a.listing_link {
+    text-decoration: none;
+    text-transform: capitalize;
+    font-size: 2rem;
+    color: blue;
+    display: flex;
+}
+
+.errorlist {
+    background-color: red;
+    border-radius: 5px;
+    border: 1px solid maroon;
+    color: aliceblue;
+    padding: 2px 10px;
+}
+
+.category_link{
+    display: flex;
+}
+
+label {
+    display: flex;
+}
+
+input, textarea {
+    border-radius: 10px;
+    padding: 5px;
+    border: 1px solid gray;
+}
+
+legend {
+    margin-top: 10px;
+    padding: 10px;
+    border-bottom: 2px solid black;
+}
+
+input[type='checkbox'] {
+    margin-left: 10px;
+}

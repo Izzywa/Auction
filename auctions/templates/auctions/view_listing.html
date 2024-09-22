@@ -1,0 +1,131 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{message.extra_tags}}" role="alert">
+        {{message}} 
+    </div>
+  {%endfor%}
+{% endif %}
+<div class="container">
+    {% if not listing.active%}
+    <div class="card border-success mb-3 text-center">
+        <div class="card-header">
+          CLOSED
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">This listing is now closed.</h5>
+          {%if max_bidder != None and max_bidder.bidder == user %}
+          <!--
+            If a user is signed in on a closed listing page, and the user has won that auction, the page should say so.
+          -->
+          <p class="card-text">Congratulations {{max_bidder.bidder.username}}! You won the bid!</p>
+          {%endif%}
+        </div>
+      </div>
+    {%endif%}
+    <div class="card mb-3">
+        {% if listing.image == '' %}
+            {%load static%}
+            <img src="{% static 'auctions/no_image.001.jpeg' %}" alt="no image">
+            {% else %}
+            <img src={{listing.image}} alt={{listing.title}}>
+        {% endif %}
+        <div class="card-body">
+          <h1 class="card-title">{{listing.title.upper}}</h1>
+          <div class="row">
+            <div class="col-sm-6">
+                <p class="card-text">{{listing.description}}</p>
+            </div>
+            <div class="col-sm-6">
+                <h5>Details</h5>
+                <ul>
+                    <li>Listed by: {{listing.seller.username}}</li>
+                    <li>Category :
+                        {% if not listing.category.all %}
+                            No categories listed
+                        {%else%}
+                        <ul>
+                        {% for category in listing.category.all%}
+                        <li>{{ category }}</li>
+                        {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="row">
+            {%if listing.active%}
+            <div class="col-sm-6">
+                <h2>${{max_bid|floatformat:2}}</h2>
+                <small class="text-secondary">{{listing.bid.count}} bid(s) so far.
+                    {% if max_bidder.bidder == user %}
+                    Your bid is the highest bid.
+                    {% endif %}
+                </small>
+                {% if user.is_authenticated %}
+                    <form action="{% url 'place_bid' listing.id %}" method="POST">
+                        {%csrf_token%}
+                        {{bid_form}}
+                        <button type="button submit" class="btn btn-dark m-2"
+                        style="--bs-btn-font-size: .3rem;">Place Bid</button>
+                    </form>
+                    {%if user == listing.seller%}
+                    <form action="{% url 'close_bid' listing.id %}" method="POST">
+                        {%csrf_token%}
+                        <button type="button submit" class="btn btn-dark m-2"
+                        style="--bs-btn-font-size: .3rem;">Close Bid</button>
+                    </form>
+                    {%endif%}
+                {%endif%}
+                </div>
+            {%endif%}
+
+            {% if user.is_authenticated%}
+            <div class="col-sm-6">
+                <div class="m-2">
+                    <form action="{% url 'watchlist' %}" method="POST">
+                        {% csrf_token%}
+                        <input type="hidden" value="{{listing.id}}" name="listing_id">
+                    <button type="button submit" class="btn btn-dark"
+                        style="--bs-btn-font-size: .3rem;">
+                            {% if user in watchlist%}
+                            remove from watchlist
+                            {% else %}
+                            add to watchlist
+                            {%endif%}
+                    </button>
+                </form>
+                </div>
+            </div>
+            {% endif%}
+        </div>
+          <p class="card-text"><small class="text-body-secondary">Created: {{listing.timestamp}}</small></p>
+        </div>
+      </div>
+    <h2>Comments:</h2>
+    <!--
+        Users who are signed in should be able to add comments to the listing page. The listing page should display all comments that have been made on the listing.
+    -->
+    {% for comment in comments%}
+    <div class="card border-info mb-3" style="display:flex;"">
+        <div class="card-header">{{comment.commenter}}</div>
+        <div class="card-body">
+          <p class="card-text">{{comment.comment}} </p>
+          <small class="text-secondary">{{comment.timestamp}}</small>
+        </div>
+      </div>
+    {% endfor %}
+    {% if user.is_authenticated%}
+    <form action="{% url 'create_comment' listing.id %}" method="POST">
+        {%csrf_token%}
+        {{comment_form}}
+        <button type="button submit" class="btn btn-info"
+        style="--bs-btn-font-size: .3rem;">Comment</button>
+    </form>
+    {%endif%}
+</div>
+{% endblock %}
